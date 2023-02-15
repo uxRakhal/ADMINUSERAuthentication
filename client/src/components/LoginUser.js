@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
+
+
 const LoginUser = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,8 +23,17 @@ const LoginUser = () => {
         const data = res.data;
         localStorage.setItem('token', data.token);
         const id = res.data.id;
+        if(id === undefined) {
+          window.location.reload();
+        }
+        else {
         navigate(`/dashboard/user/${id}`);
-      } catch (err) {
+        }
+      } 
+      catch (err) {
+        if(err){
+          console.log(err.message);
+        }
         console.error("Invalid email or password");
       }});
     };

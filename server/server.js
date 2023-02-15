@@ -183,7 +183,7 @@ router.post('/login/user', async (req, res) => {
  
 const userRole = await Role.findOne({name: 'user'});
 const user = await Person.findOne({ email: req.body.email, roles: [userRole._id] });
-  
+if(!user) return res.status(400).send({ message: 'user not found' });
 const isMatch = await bcrypt.compare(req.body.password, user.password);
 if (!isMatch) return res.status(400).send({ error: 'Email or password is invalid' });
 if (!isMatch){
@@ -266,6 +266,22 @@ router.delete('/admin/:id', async (req, res) => {
     res.send('Admin deleted');
   })
 });
+
+router.put('/changepassword/user/:id', async (req, res) => {
+  const oPassword = req.body.oldPassword;
+  const nPassword = req.body.newPassword;
+  const id = req.params.id;
+  const user = await Person.findOne({_id : id});
+  console.log(user);
+  const ismatch = bcrypt.compare(oPassword, user.password)
+  if(!ismatch) return res.status(401).send('Password mismatch');
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(nPassword, salt);
+
+  user.password = hashedPassword;
+  
+  await user.save();
+})
 
 app.use("/", router);
 

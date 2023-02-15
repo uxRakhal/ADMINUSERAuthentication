@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const AdminDashboard = () => {
 const [users, setUsers] = useState([]);
 const [admins, setAdmins] = useState([]);
-let admin
+let admin;
   
     useEffect(() => {
       axios
